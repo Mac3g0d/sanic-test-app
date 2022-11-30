@@ -1,9 +1,6 @@
 from sanic import Sanic, response, HTTPResponse, Request
-from sqlalchemy import select
-
 from .services.transform_cdn_url import TransformCdnUrlService
 from .config import LoadBalancerConfig
-from .models import CDNHost
 from .utils import startup, inject_session, close_session
 
 app = Sanic(name='load_balancer_app')
@@ -23,19 +20,13 @@ async def balance_load(request: Request) -> HTTPResponse:
         if app.config['REQUESTS_COUNT'] >= app.config['REDIRECT_REQUEST_NUM']:
             app.config['REQUESTS_COUNT'] = 0
 
-            return response.text(video_url)
+            return response.redirect(video_url, status=301)
 
         cnd_hosted_url = await TransformCdnUrlService(video_url, request.ctx.session)()
         app.config['REQUESTS_COUNT'] += 1
 
-        return response.text(cnd_hosted_url)
+        return response.redirect(cnd_hosted_url, status=301)
 
     return response.text('query parameter `video` is required', status=400)
 
-
-@app.route("/health")
-async def healthcheck(request: Request) -> HTTPResponse:
-
-    qq = await request.ctx.session.execute(select(CDNHost))
-    return response.text(f'{list(qq)}')
 

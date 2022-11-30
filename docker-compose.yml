@@ -19,8 +19,6 @@ services:
       - default
     ports:
       - "8000:8000"
-    depends_on:
-      - db
 
 volumes:
   mysql-db:

@@ -7,7 +7,6 @@ _base_model_session_ctx = ContextVar("session")
 
 
 async def startup(app, loop):
-    print('\n\n\\n\n')
     await init_db()
 
 

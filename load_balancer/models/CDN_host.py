@@ -19,5 +19,4 @@ class CDNHost(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     def __repr__(self):
-        """ Show user object info. """
         return f'<CDNHost: {self.id}>'
